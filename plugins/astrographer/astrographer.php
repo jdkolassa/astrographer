@@ -129,13 +129,11 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
         if(!current_user_can("manage_options")) { ?>
             <p>You have insufficient permissions to access this feature.</p>
         <?php } else { 
-            // ! THIS IS JUST FOR DEBUGGING!
-            $hyg_debug = plugin_dir_path(__FILE__) . '/assets/hygdata_v3.csv';
             $nonce = wp_create_nonce( "astrog_nonce" );
             $link = admin_url('admin-ajax.php?action=astrog_load_data&nonce='.$nonce);
             ?>
         <a id="dataloader" class="button button-primary" href="<?php echo $link ?>">Load data</a>
-        <div id="report" data-filepath="<?php echo $hyg_debug ?>">
+        <div id="report">
 
         </div>
 
@@ -147,10 +145,6 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
  function astrog_ajax_call(){ ?>
 
  <script type="text/javascript">
-     jQuery( document ).ready(function() {
-    console.log( "HYG filepath is: " + jQuery("report").data("filepath"));
-    console.log("Home path is " + <?php echo get_home_path() ?>);
-    });
      jQuery("#dataloader").click(function(){
          var data = {
              action: "astrog_load_data",
