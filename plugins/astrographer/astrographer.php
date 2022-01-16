@@ -17,7 +17,7 @@
 
  Author URI: https://jdkolassa.net
 
- License: MIT
+ License: Creative Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5) (https://creativecommons.org/licenses/by-sa/2.5/)
 
  Text Domain: astrographer
  */
