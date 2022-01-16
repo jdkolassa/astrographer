@@ -1,0 +1,18 @@
+{
+  "name": "astrographer",
+  "version": "1.0.0",
+  "description": "Test theme to demo database backends and ReactJS frontend skills",
+  "main": "index.js",
+  "scripts": {
+    "test": "experiment"
+  },
+  "author": "Jeremy Kolassa",
+  "license": "MIT",
+  "devDependencies": {
+    "@wordpress/scripts": "^19.2.2",
+    "tailwindcss": "^3.0.15"
+  },
+  "dependencies": {
+    "postcss-nested": "^5.0.6"
+  }
+}
