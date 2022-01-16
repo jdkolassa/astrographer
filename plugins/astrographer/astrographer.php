@@ -33,11 +33,14 @@
  add_action('action_post_astrog_load_data', 'astrog_load_data');
 
  function astrog_load_data(){
+     
      // ! Make sure to check if the file is present!
-     $hyg = './assets/hygdata_v3.csv';
+     $hyg = get_home_path() . 'wp-content/plugins/astrographer/assets/hygdata_demo_subset.csv'; // plugins\astrographer\assets\hygdata_v3.csv
      if(!file_exists($hyg)){
          wp_die('HYG data missing!');
      }
+     // * This is a huge file, it will need time to process, so let's increase the execution time
+     set_time_limit(600);
      // TODO: Later, add code to use the GitHub API to download the data if it's not present
 
         // Open the CSV file, but make sure not to write anything to it
@@ -125,15 +128,53 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
         <?php
         if(!current_user_can("manage_options")) { ?>
             <p>You have insufficient permissions to access this feature.</p>
-        <?php } else { ?>
-        <form action="<?php echo admin_url( 'admin-post.php') ?>" method="GET">
-            <input type="hidden" name="action" value="astrog_load_data" />
-            <input type="submit" value="Load Data" />
-        </form>
+        <?php } else { 
+            // ! THIS IS JUST FOR DEBUGGING!
+            $hyg_debug = plugin_dir_path(__FILE__) . '/assets/hygdata_v3.csv';
+            $nonce = wp_create_nonce( "astrog_nonce" );
+            $link = admin_url('admin-ajax.php?action=astrog_load_data&nonce='.$nonce);
+            ?>
+        <a id="dataloader" class="button button-primary" href="<?php echo $link ?>">Load data</a>
+        <div id="report" data-filepath="<?php echo $hyg_debug ?>">
+
+        </div>
 
         <?php }
 
  }
+
+ add_action( 'admin_footer', 'astrog_ajax_call');
+ function astrog_ajax_call(){ ?>
+
+ <script type="text/javascript">
+     jQuery( document ).ready(function() {
+    console.log( "HYG filepath is: " + jQuery("report").data("filepath"));
+    console.log("Home path is " + <?php echo get_home_path() ?>);
+    });
+     jQuery("#dataloader").click(function(){
+         var data = {
+             action: "astrog_load_data",
+         };
+
+         jQuery.ajax({
+             url: ajaxurl,
+             type: "POST",
+             data: data,
+             success: function(response) {
+                 console.log(response);
+                 jQuery("#report").html('<p>Data has been loaded.</p>');
+             },
+             error: function(error){
+                 console.log(error);
+                 jQuery("#report").html('<p>Data loading error. Please check the console for details.</p>')
+             }
+         });
+     });
+     </script>
+
+ <?php }
+
+ add_action('wp_ajax_astrog_load_data', 'astrog_load_data');
 
   // TODO: Create action function to run data load button
 
