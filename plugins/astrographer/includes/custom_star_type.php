@@ -21,8 +21,8 @@ add_action('init', 'astrog_create_star_post_type');
 
 // Let's create the metaboxes with cmb2
 
-require_once __DIR__ . '/cmb2/init.php';
-add_action( 'cmb2_admin_init', 'cmb2_star_metaboxes' );
+require_once __DIR__ . '/../cmb2/init.php';
+add_action('cmb2_admin_init', 'cmb2_star_metaboxes' );
 
 function cmb2_star_metaboxes(){
 
