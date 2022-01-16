@@ -7,7 +7,7 @@
 /*
  Plugin Name: Astrographer
 
- Plugin URI: https://jdkolassa.net
+ Plugin URI: https://github.com/jdkolassa/astrographer
 
  Description: Imports the HYG database into Wordpress and displays the nearest stars to Earth in a filterable search. Works best with the Astrographeme theme. Requires CMB2 for metaboxes.
 
@@ -30,15 +30,19 @@
 
  // TODO: Code to load in .csv database
 
+ add_action('action_post_astrog_load_data', 'astrog_load_data');
+
  function astrog_load_data(){
-     // TODO: Make sure to check if the file is present!
+     // ! Make sure to check if the file is present!
      $hyg = './assets/hygdata_v3.csv';
      if(!file_exists($hyg)){
          wp_die('HYG data missing!');
      }
+     // TODO: Later, add code to use the GitHub API to download the data if it's not present
 
         // Open the CSV file, but make sure not to write anything to it
         $csv = fopen($hyg, 'r');
+        file_put_contents('./csv_open.txt', "We opened the CSV");
 
         /**
          * * The CSV has many columns, the ones we need are:
@@ -70,7 +74,7 @@
                 }
 
                 // TODO: Code to import data into the WP databases and create the posts
-                // Put the importing options into a single array so I don't copy myself
+                // * Put the importing options into a single array so I don't copy myself
 
                 $postoptions = [
                     'ID' => $import['id'],
@@ -95,6 +99,8 @@
 
             };
 
+            
+            wp_redirect(admin_url('/options-general.php?page=astrographer%2Fastrog-admin.php'));
             exit('HYG data loaded');
 
         } else {
@@ -120,9 +126,9 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
         if(!current_user_can("manage_options")) { ?>
             <p>You have insufficient permissions to access this feature.</p>
         <?php } else { ?>
-        <form action="<?php echo admin_url( 'admin-post.php'); ?>">
-            <input type="hidden" name="action" value="astrog_load_data">
-            <button>Load Data</button>
+        <form action="<?php echo admin_url( 'admin-post.php') ?>" method="GET">
+            <input type="hidden" name="action" value="astrog_load_data" />
+            <input type="submit" value="Load Data" />
         </form>
 
         <?php }
@@ -131,5 +137,5 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
 
   // TODO: Create action function to run data load button
 
-  add_action('action_post_astrog_load_data', 'astrog_load_data');
+ 
  
