@@ -24,38 +24,17 @@
 
  // !: Remember to use "astrog" to prefix all functions
 
- include_once("/includes/custom_star_type.php"); // This will create the custom post type
- include_once("/cmb2/init.php"); // main cmb2 file
+ require_once __DIR__ . "./includes/custom_star_type.php"; // This will create the custom post type
+ require_once __DIR__ . "./cmb2/init.php"; // main cmb2 file
 
 
  // TODO: Code to load in .csv database
 
  function astrog_load_data(){
      // TODO: Make sure to check if the file is present!
-     $hyg = '/assets/hygdata_v3.csv';
+     $hyg = './assets/hygdata_v3.csv';
      if(!file_exists($hyg)){
-         // ? Should I have the program go and download the file from the GitHub repo, or 
-         // ? would it better to just have it emit an error?
-
-         $url = 'https://raw.githubusercontent.com/astronexus/HYG-Database/master/hygdata_v3.csv';
-
-        // Start a cURL session
-         $ch = curl_init();
-
-        // Set where to get, where to put the download, and also to follow redirects
-         $choptions = [
-             CURLOPT_URL => $url,
-             CURLOPT_FOLLOWLOCATION => true,
-             CURLOPT_FILE => $hyg,
-         ];
-
-         curl_setopt_array($ch, $choptions);
-
-         // Perform the cURL
-         curl_exec($ch);
-
-         // Close the cURL session - what are we, animals?
-         curl_close($ch);
+         wp_die('HYG data missing!');
      }
 
         // Open the CSV file, but make sure not to write anything to it
@@ -123,6 +102,14 @@
         }
  }
 
+ // TODO: Add function to create entry in menu
+
+add_action( 'admin_menu', 'add_astrog_admin_page');
+
+ function add_astrog_admin_page(){
+     add_options_page('Astrographer', 'Astrographer', 'manage_options', 'astrographer/astrog-admin.php', 'astrog_admin_page');
+ }
+
  // TODO: Create admin page with button to load data
  function astrog_admin_page(){
     ?>
@@ -139,7 +126,6 @@
         </form>
 
         <?php }
-
 
  }
 
