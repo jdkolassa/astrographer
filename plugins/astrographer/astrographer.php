@@ -49,7 +49,7 @@
 
         /**
          * * The CSV has many columns, the ones we need are:
-         * ! Remember to start from O, not 1!
+         * ? Are CSV columns zero-indexed?
          * * ID = 0 (we'll use this just for the import)
          * * HIP = 1 (Hipparcos ID, we'll use this as the post ID)
          * * Proper = 6 (The "real" name of the star, as opposed to a catalog number) 
@@ -58,13 +58,13 @@
          * */ 
         $import = [];
         if($csv){
-            while(($row = fgetcsv($csv, 0, ',', '\'', '\\')) !== FALSE){
+            while(($row = fgetcsv($csv, 0, ',')) !== FALSE){
                 $import = [
-                    'id' => $row[0],
-                    'hip' => $row[1],
-                    'name' => $row[6],
-                    'distance' => $row[9],
-                    'spect' => $row[15],
+                    'id' => $row[1],
+                    'hip' => $row[2],
+                    'name' => $row[7],
+                    'distance' => $row[10],
+                    'spect' => $row[16],
                 ];
                 // If the star doesn't have a proper name, we'll use the Hipparcos number instead
                 if($import['name'] == ''){
@@ -160,7 +160,7 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
              },
              error: function(error){
                  console.log(error);
-                 jQuery("#report").html('<p>Data loading error. Please check the console for details.</p>')
+                 jQuery("#report").html('<p>Data loading error: ' + error + '</p>')
              }
          });
      });
