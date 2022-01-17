@@ -34,7 +34,7 @@
 
  function astrog_load_data(){
      // ! Make sure to check if the file is present!
-     $hyg = './assets/hygdata_v3.csv';
+     $hyg = get_home_path() . 'wp-content/plugins/astrographer/assets/hygdata_demo_subset.csv';
      if(!file_exists($hyg)){
          wp_die('HYG data missing!');
      }
