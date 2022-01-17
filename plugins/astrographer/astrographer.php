@@ -58,13 +58,14 @@
          * */ 
         $import = [];
         if($csv){
+            //fgetcsv($csv, 0, ","); // Skip the first line by getting it and doing nothing
             while(($row = fgetcsv($csv, 0, ',')) !== FALSE){
                 $import = [
-                    'id' => $row[1],
-                    'hip' => $row[2],
-                    'name' => $row[7],
-                    'distance' => $row[10],
-                    'spect' => $row[16],
+                    'id' => $row[0],
+                    'hip' => $row[1],
+                    'name' => $row[6],
+                    'distance' => $row[9],
+                    'spect' => $row[15],
                 ];
                 // If the star doesn't have a proper name, we'll use the Hipparcos number instead
                 if($import['name'] == ''){
@@ -130,7 +131,7 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
             <p>You have insufficient permissions to access this feature.</p>
         <?php } else { 
             $nonce = wp_create_nonce( "astrog_nonce" );
-            $link = admin_url('admin-ajax.php?action=astrog_load_data&nonce='.$nonce);
+            $link = admin_url('admin-ajax.php?action=astrog_load_data');
             ?>
         <a id="dataloader" class="button button-primary" href="<?php echo $link ?>">Load data</a>
         <div id="report">
@@ -160,7 +161,7 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
              },
              error: function(error){
                  console.log(error);
-                 jQuery("#report").html('<p>Data loading error: ' + error + '</p>')
+                 jQuery("#report").html('<p>Data loading error: ' + JSON.stringify(error) + '</p>');
              }
          });
      });
