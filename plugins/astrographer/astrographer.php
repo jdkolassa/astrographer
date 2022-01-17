@@ -61,12 +61,18 @@
         if($csv){
             //fgetcsv($csv, 0, ","); // Skip the first line by getting it and doing nothing
             while(($row = fgetcsv($csv, 0, ',')) !== FALSE){
+                /**
+                 * ? For some reason, if I try zero-indexing, instead of grabbing the "next" column as it should
+                 * ? (because "0 = 1" in zero-indexing)
+                 * ? It instead grabs two columns over! So $row[15] != 16 but actually == 17!
+                 * ? This is bizarre to me. I'm sure there's an answer on Stackoverflow.
+                 *  
+                 */ 
                 $import = [
-                    'id' => $row[0],
-                    'hip' => $row[1],
-                    'name' => $row[6],
-                    'distance' => $row[9],
-                    'spect' => $row[15],
+                    'hip' => $row[0],
+                    'name' => $row[5],
+                    'distance' => $row[8],
+                    'spect' => $row[14],
                 ];
                 // If the star doesn't have a proper name, we'll use the Hipparcos number instead
                 if($import['name'] == ''){
