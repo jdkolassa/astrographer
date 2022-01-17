@@ -56,6 +56,7 @@
          * * Dist = 9 (Distance from Earth in parsecs; multiply by 3.262 to get lightyears)
          * * Spect = 15 (Spectral type, really important)
          * */ 
+        // ! COMMIT NOTE: This code works, it's just off by 1! 
         $import = [];
         if($csv){
             //fgetcsv($csv, 0, ","); // Skip the first line by getting it and doing nothing
