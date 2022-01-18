@@ -33,79 +33,59 @@
  add_action('action_post_astrog_load_data', 'astrog_load_data');
 
  function astrog_load_data(){
+     
      // ! Make sure to check if the file is present!
-     $hyg = get_home_path() . 'wp-content/plugins/astrographer/assets/hygdata_demo_subset.csv';
+     $hyg = get_home_path() . 'wp-content/plugins/astrographer/assets/hygdata_demo_subset.csv'; // plugins\astrographer\assets\hygdata_v3.csv
      if(!file_exists($hyg)){
          wp_die('HYG data missing!');
      }
      // TODO: Later, add code to use the GitHub API to download the data if it's not present
 
-        // Open the CSV file, but make sure not to write anything to it
-        $csv = fopen($hyg, 'r');
-        file_put_contents('./csv_open.txt', "We opened the CSV");
-
         /**
          * * The CSV has many columns, the ones we need are:
-         * ! Remember to start from O, not 1!
+         * ? Are CSV columns zero-indexed?
          * * ID = 0 (we'll use this just for the import)
          * * HIP = 1 (Hipparcos ID, we'll use this as the post ID)
          * * Proper = 6 (The "real" name of the star, as opposed to a catalog number) 
          * * Dist = 9 (Distance from Earth in parsecs; multiply by 3.262 to get lightyears)
          * * Spect = 15 (Spectral type, really important)
          * */ 
-        $import = [];
-        if($csv){
-            while(($row = fgetcsv($csv, 0, ',', '\'', '\\')) !== FALSE){
-                $import = [
-                    'id' => $row[0],
-                    'hip' => $row[1],
-                    'name' => $row[6],
-                    'distance' => $row[9],
-                    'spect' => $row[15],
-                ];
-                // If the star doesn't have a proper name, we'll use the Hipparcos number instead
-                if($import['name'] == ''){
-                    $import['name'] = 'HIP ' . $import['hip'];
-                }
-                // Our star, Sol, has an ID of 0, but we can't use that in Wordpress
-                // The HYG database goes up to 119615, so I'm setting a stupid high number to avoid conflicts
-                if($import['id'] == '0'){
-                    $import['id'] = '999999';
-                }
-
-                // TODO: Code to import data into the WP databases and create the posts
-                // * Put the importing options into a single array so I don't copy myself
-
-                $postoptions = [
-                    'ID' => $import['id'],
-                    'post_title' => $import['name'],
+        if (($handle = fopen($hyg, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 9999, ",")) !== FALSE) {
+              $row_data = [
+                    'id' => $data[0],
+                    'post_title' => $data[6],
                     'post_type' => 'astrog_star',
+                    'post_status' => 'publish',
                     'meta_input' => [
-                        'hip' => $import['hip'],
-                        'distance' => (int)$import['distance'] * 3.262, // Converting parsecs to lightyears
-                        'spectral_type' => $import['spect'],
+                      'hip' => $data[1],
+                      'distance' => round((float)$data[9] * 3.262, 2),
+                      'spect' => $data[15],
                     ],
                 ];
-
-                // Check to make sure the star doesn't already exist on our site
-                if(!get_post($import['id'])) {
-                    wp_insert_post($postoptions);
-                } else {
-                    wp_update_post($postoptions, true, true);
+        
+                if(empty($row_data['post_title'])){
+                  if(empty($data[1]) && !empty($data[5])){
+                    $row_data['post_title'] = $data[5];
+                  } elseif (!empty($data[1])){
+                    $row_data['post_title'] = "HIP " . $data[1];
+                  } else {
+                    $row_data['post_title'] = $data[4];
+                  }
                 }
-
-                // I'm always paranoid the array won't refresh on the next loop
-                $import = [];
-
-            };
-
-            
-            wp_redirect(admin_url('/options-general.php?page=astrographer%2Fastrog-admin.php'));
-            exit('HYG data loaded');
-
+        
+              $stars[] = $row_data;
+        
+            }
+            fclose($handle);
         } else {
             exit("Unable to open CSV file");
         }
+        
+
+         foreach($stars as $star){
+            wp_insert_post($star);
+        } 
  }
 
  // TODO: Add function to create entry in menu
@@ -125,15 +105,47 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
         <?php
         if(!current_user_can("manage_options")) { ?>
             <p>You have insufficient permissions to access this feature.</p>
-        <?php } else { ?>
-        <form action="<?php echo admin_url( 'admin-post.php') ?>" method="GET">
-            <input type="hidden" name="action" value="astrog_load_data" />
-            <input type="submit" value="Load Data" />
-        </form>
+        <?php } else { 
+            $nonce = wp_create_nonce( "astrog_nonce" );
+            $link = admin_url('admin-ajax.php?action=astrog_load_data');
+            ?>
+        <a id="dataloader" class="button button-primary" href="<?php echo $link ?>">Load data</a>
+        <div id="report">
+
+        </div>
 
         <?php }
 
  }
+
+ add_action( 'admin_footer', 'astrog_ajax_call');
+ function astrog_ajax_call(){ ?>
+
+ <script type="text/javascript">
+     jQuery("#dataloader").click(function(){
+         var data = {
+             action: "astrog_load_data",
+         };
+
+         jQuery.ajax({
+             url: ajaxurl,
+             type: "POST",
+             data: data,
+             success: function(response) {
+                 console.log(response);
+                 jQuery("#report").html('<p>Data has been loaded.</p>');
+             },
+             error: function(error){
+                 console.log(error);
+                 jQuery("#report").html('<p>Data loading error: ' + JSON.stringify(error) + '</p>');
+             }
+         });
+     });
+     </script>
+
+ <?php }
+
+ add_action('wp_ajax_astrog_load_data', 'astrog_load_data');
 
   // TODO: Create action function to run data load button
 
