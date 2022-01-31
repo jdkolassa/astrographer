@@ -52,17 +52,22 @@
          * */ 
         if (($handle = fopen($hyg, "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 9999, ",")) !== FALSE) {
+            set_time_limit(2400);
               $row_data = [
-                    'id' => $data[0],
                     'post_title' => $data[6],
                     'post_type' => 'astrog_star',
                     'post_status' => 'publish',
+                    'import_id' => $data[0],
                     'meta_input' => [
                       'hip' => $data[1],
                       'distance' => round((float)$data[9] * 3.262, 2),
                       'spect' => $data[15],
                     ],
                 ];
+
+                if($row_data['import_id'] == 0){
+                    $row_data['import_id'] = 1;
+                }
         
                 if(empty($row_data['post_title'])){
                   if(empty($data[1]) && !empty($data[5])){
@@ -73,20 +78,35 @@
                     $row_data['post_title'] = $data[4];
                   }
                 }
+
+                if(empty($row_data['meta_input']['hip'])){
+                    $row_data['meta_input']['hip'] = null;
+                }
         
               $stars[] = $row_data;
-        
+            
             }
             fclose($handle);
-        } else {
-            exit("Unable to open CSV file");
+
+            /* $readout2 = get_home_path() . 'wp-content/plugins/astrographer/assets/readout2.txt';
+              file_put_contents($readout2, print_r($stars, true));  */
+              foreach($stars as $star){
+                $checkID = $star['import_id'];
+                $exists = (new WP_Query(['post_type' => 'astrog_star', 'p'=>$checkID]))->found_posts > 0;
+    
+                if($exists){
+                    wp_update_post($star);
+                } else {
+                    wp_insert_post($star);
+                }
+                
+            }
         }
+
+}
+        
         
 
-         foreach($stars as $star){
-            wp_insert_post($star);
-        } 
- }
 
  // TODO: Add function to create entry in menu
 
