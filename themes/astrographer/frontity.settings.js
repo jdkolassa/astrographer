@@ -2,50 +2,27 @@ const settings = {
   "name": "astrographer",
   "state": {
     "frontity": {
-      "url": "https://test.frontity.org",
-      "title": "Test Frontity Blog",
-      "description": "WordPress installation for Frontity development"
+      "url": "https://localhost",
+      "title": "Astrographer",
+      "description": "Frontity Frontend for Astrographer project"
     }
   },
   "packages": [
     {
-      "name": "@frontity/mars-theme",
-      "state": {
-        "theme": {
-          "menu": [
-            [
-              "Home",
-              "/"
-            ],
-            [
-              "Nature",
-              "/category/nature/"
-            ],
-            [
-              "Travel",
-              "/category/travel/"
-            ],
-            [
-              "Japan",
-              "/tag/japan/"
-            ],
-            [
-              "About Us",
-              "/about-us/"
-            ]
-          ],
-          "featured": {
-            "showOnList": false,
-            "showOnPost": false
-          }
-        }
-      }
+      "name": "astro-theme"
     },
     {
       "name": "@frontity/wp-source",
       "state": {
         "source": {
-          "url": "https://test.frontity.org"
+          "url": "http://localhost:10004", // that port number changes because of Local, so this could be a problem
+          "postTypes": [
+            { 
+              type: "astrog_star",
+              endpoint: "astrog_star",
+              archive: "/astro"
+            }
+          ]
         }
       }
     },
