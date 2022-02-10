@@ -1,0 +1,13 @@
+{
+  "name": "astro-theme",
+  "version": "1.0.0",
+  "description": "Astrographer package for its frontend",
+  "keywords": [
+    "astrographer",
+    "frontity-theme"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "frontity": "^1.17.1"
+  }
+}
