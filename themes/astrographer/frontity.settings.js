@@ -15,12 +15,12 @@ const settings = {
       "name": "@frontity/wp-source",
       "state": {
         "source": {
-          "url": "http://localhost:10004", // that port number changes because of Local, so this could be a problem
+          "api": "http://localhost:10004/wp-json/", // that port number changes because of Local, so this could be a problem
           "postTypes": [
             { 
               type: "astrog_star",
-              endpoint: "astrog_star",
-              archive: "/astro"
+              endpoint: "stars",
+              archive: "/"
             }
           ]
         }
