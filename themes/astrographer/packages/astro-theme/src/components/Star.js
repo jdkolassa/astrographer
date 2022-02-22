@@ -1,14 +1,14 @@
 import React from 'react';
 import { connect } from "frontity";
 
-const Star = ({ state, props }) => {
+const Star = ({ state, name, spect, distance }) => {
 
     return (
         <div>
-            <h5>{props.name}</h5>
-            <div className={`{stellar ${props.spectral}}`}></div>
+            <h5>{name}</h5>
+            <div className={`{stellar ${spect}}`}>{spect}</div>
             <div>
-                <span>{props.distance}</span>
+                <span>{distance}</span>
             </div>
         </div>
     )
