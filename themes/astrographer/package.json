@@ -24,8 +24,6 @@
     "@frontity/wp-source": "^1.11.7",
     "astro-theme": "file:packages/astro-theme",
     "babel-plugin-macros": "^3.1.0",
-    "frontity": "^1.17.1",
-    "tailwind.macro": "^1.0.0-alpha.10",
-    "tailwindcss": "^3.0.18"
+    "frontity": "^1.17.1"
   }
 }
