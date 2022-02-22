@@ -14,3 +14,5 @@ const Star = ({ state, props }) => {
     )
     
 }
+
+export default connect(Star);
