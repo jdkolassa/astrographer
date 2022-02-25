@@ -23,7 +23,7 @@
     "@frontity/tiny-router": "^1.4.4",
     "@frontity/wp-source": "^1.11.7",
     "astro-theme": "file:packages/astro-theme",
-    "babel-plugin-macros": "^3.1.0",
-    "frontity": "^1.17.1"
+    "frontity": "^1.17.1",
+    "stellar-classification-parser": "^1.1.4"
   }
 }
