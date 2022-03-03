@@ -21,17 +21,8 @@ const Grid = ({ state }) => {
            {stars.items.map((item) => {
              const star = state.source[item.type][item.id];
 
-            {/* Using the stellar classification parser module to...parse the stellar classifications. Thanks Codebox!
-               
-            
-            */}
-
-            let type = parser.parse(star.spect);
-            let hue = type.data.colour.r + "," + type.data.colour.g + "," + type.data.colour.b;
-            let mass = type.data.mass;
-
             return (
-              <Star key={star.id} name={star.title.rendered} spect={star.spect} hue={hue} mass={mass} distance={star.distance}></Star>
+              <Star key={star.id} name={star.title.rendered} spect={star.spect} hue={star.hue} mass={star.mass} distance={star.distance}></Star>
             ) 
           })} 
         </div> 
