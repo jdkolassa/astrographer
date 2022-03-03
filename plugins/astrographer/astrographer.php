@@ -169,5 +169,31 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
 
   // TODO: Create action function to run data load button
 
+// Adding custom fields to rest
  
- 
+add_action( 'rest_api_init', 'astrog_star_register_fields');
+
+function astrog_star_register_fields(){
+   foreach (['spect', 'distance'] as $field) {
+       register_rest_field('astrog_star',
+       $field,
+       [
+           'get_callback' => 'astrog_star_get_field',
+           'update_callback' => null,
+           'schema' => null,
+       ]);
+   }
+}
+
+/* 
+ * Get the value of the meta fields
+ * @param array $object Details of current post.
+ * @param string $field_name Name of field.
+ * @param WP_REST_Request $request Current request
+ *
+ * @return mixed
+*/
+
+function astrog_star_get_field($object, $field_name, $request){
+    return get_post_meta($object['id'], $field_name, true);
+}

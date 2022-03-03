@@ -1,18 +1,28 @@
 {
   "name": "astrographer",
   "version": "1.0.0",
-  "description": "Test theme to demo database backends and ReactJS frontend skills",
-  "main": "index.js",
+  "private": true,
+  "description": "Frontity project",
+  "keywords": [
+    "frontity"
+  ],
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
   "scripts": {
-    "test": "experiment"
+    "dev": "frontity dev",
+    "build": "frontity build",
+    "serve": "frontity serve"
   },
-  "author": "Jeremy Kolassa",
-  "license": "MIT",
-  "devDependencies": {
-    "@wordpress/scripts": "^19.2.2",
-    "tailwindcss": "^3.0.15"
-  },
+  "prettier": {},
   "dependencies": {
-    "postcss-nested": "^5.0.6"
+    "@frontity/core": "^1.14.3",
+    "@frontity/html2react": "^1.7.0",
+    "@frontity/mars-theme": "./packages/mars-theme",
+    "@frontity/tiny-router": "^1.4.4",
+    "@frontity/wp-source": "^1.11.7",
+    "astro-theme": "file:packages/astro-theme",
+    "frontity": "^1.17.1"
   }
 }

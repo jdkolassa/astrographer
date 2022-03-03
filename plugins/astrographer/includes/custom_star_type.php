@@ -11,8 +11,10 @@ function astrog_create_star_post_type() {
                 'singular_name' => __('Star', 'textdomain'),
             ],
             'public' => true,
-            'has_archive' => false,
+            'has_archive' => true,
             'rewrite' => ['slug' => 'stars'],
+            'show_in_rest' => 'true',
+            'rest_base' => 'stars',
         ]
         );
 }
