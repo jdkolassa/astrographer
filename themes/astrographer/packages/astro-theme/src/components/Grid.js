@@ -22,7 +22,7 @@ const Grid = ({ state }) => {
              const star = state.source[item.type][item.id];
 
             return (
-              <Star key={star.id} name={star.title.rendered} spect={star.spect} hue={star.hue} mass={star.mass} distance={star.distance}></Star>
+              <Star key={star.id} name={star.title.rendered} spect={star.spect} hue={star.hue} lumos={star.lumos} distance={star.distance}></Star>
             ) 
           })} 
         </div> 
