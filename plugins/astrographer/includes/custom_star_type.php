@@ -56,6 +56,33 @@ function cmb2_star_metaboxes(){
         ]);
     }
 
+    // Luminosity Class
+    /*
+        0/Ia+ = Hypergiant = 3rem
+        I = Supergiant = 2rem
+        II = Bright Giant = 1.5rem
+        III = Giant = 1rem
+        IV = Subgiant = 0.75rem
+        V = Main-Sequence (Dwarf) = baseSize = 0.5rem
+            Though a red dwarf will be much smaller than a yellow dwarf, so may need a rethink... 
+        sd (VI) = Subdwarf = 0.25rem
+        D (VII) = White Dwarf = 
+    */
+
+    $cmb->add_field([
+        'name' => 'Luminosity/Mass',
+        'desc' => 'Should be an integer. Is the star a supergiant, giant, dwarf, etc. Chiefly affects the size of the star as it appears on the home page.',
+        'id' => 'astrog_lumos',
+        'type' => 'text',
+    ]);
+
+    $cmb->add_field([
+        'name' => 'Hue',
+        'desc' => 'Color/hue of the star. Use the general term from the stellar spectrum; the specific hexadecimal color will be applied within ReactJS.',
+        'id' => 'astrog_hue',
+        'type' => 'text',
+    ]);
+
     // CMB2 does not have a boolean field type, and I don't see an extension that adds it, so I'll use a simple radio field instead
     // ! Planets are only in the Solar System. All other similar objects are specifically exoplanets.
     // ! Astronomers get annoyed if you conflate the two.
