@@ -57,7 +57,7 @@
                     'post_title' => $data[6],
                     'post_type' => 'astrog_star',
                     'post_status' => 'publish',
-                    'import_id' => $data[0],
+                    'check' => $data[0],
                     'meta_input' => [
                       'hip' => $data[1],
                       'distance' => round((float)$data[9] * 3.262, 2),
@@ -65,8 +65,8 @@
                     ],
                 ];
 
-                if($row_data['import_id'] == 0){
-                    $row_data['import_id'] = 1;
+                if($row_data['check'] == 0){
+                    $row_data['check'] = 1;
                 }
         
                 if(empty($row_data['post_title'])){
@@ -82,22 +82,93 @@
                 if(empty($row_data['meta_input']['hip'])){
                     $row_data['meta_input']['hip'] = null;
                 }
+
+                // Assign luminosity class and hue
+                $spect = $row_data['meta_input']['spect'];
+
+                switch($spect){
+                    case preg_match('/O/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "blue";
+                        break;
+                    case preg_match('/B/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "blue white";
+                        break;
+                    case preg_match('/A/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "white";
+                        break;
+                    case preg_match('/F/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "yellow white";
+                        break;
+                    case preg_match('/G/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "yellow";
+                        break;
+                    case preg_match('/K/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "orange";
+                        break;
+                    case preg_match('/(M|m)/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "red";
+                        break;
+                    case preg_match('/D/', $spect):
+                        $row_data['meta_input']['astrog_hue'] = "degenerate";
+                        break;
+                }
+
+                switch($spect){
+                    case preg_match('/I{3}/', $spect):
+                        $row_data['meta_input']['astrog_lumos'] = "giant";
+                        break;
+                    case preg_match('/I{2}/', $spect):
+                        $row_data['meta_input']['astrog_lumos'] = "bright";
+                        break;
+                    case preg_match('/I(?=V)/', $spect):
+                        $row_data['meta_input']['astrog_lumos'] = "subgiant";
+                        break;
+                    case preg_match('/V/', $spect):
+                        $row_data['meta_input']['astrog_lumos'] = "dwarf";
+                        break;
+                    case preg_match('/I{1}/', $spect):
+                        $row_data['meta_input']['astrog_lumos'] = "supergiant";
+                        break;
+                    case preg_match('/0|Ia\+/', $spect):
+                        $row_data['meta_input']['astrog_lumos'] =
+                        "hypergiant";
+                        break;
+                    case preg_match('/^sd/', $spect):
+                        $row_data['meta_input']['astrog_lumos'] =
+                        "subdwarf";
+                        break;
+                    default:
+                        $row_data['meta_input']['astrog_lumos'] = "dwarf";
+                }
         
               $stars[] = $row_data;
             
             }
             fclose($handle);
 
-            /* $readout2 = get_home_path() . 'wp-content/plugins/astrographer/assets/readout2.txt';
-              file_put_contents($readout2, print_r($stars, true));  */
+             $readout2 = get_home_path() . 'wp-content/plugins/astrographer/assets/readout2.txt';
+              file_put_contents($readout2, print_r($stars, true));
+
               foreach($stars as $star){
-                $checkID = $star['import_id'];
-                $exists = (new WP_Query(['post_type' => 'astrog_star', 'p'=>$checkID]))->found_posts > 0;
+                $checkID = $star['check'];
+                //$exists = (new WP_Query(['post_type' => 'astrog_star', 'p'=>$checkID]))->found_posts > 0;
+
+                $exists = get_post(['p' => $checkID]);
     
-                if($exists){
-                    wp_update_post($star);
+                if(is_null($exists)){
+                    $star['import_id'] = $star['check'];
+                    unset($star['check']);
+                    $insert = wp_insert_post($star, true);
+                    if(is_wp_error($insert)){
+                        echo $insert->get_error_message();
+                    }
                 } else {
-                    wp_insert_post($star);
+                    $star['ID'] = $star['check'];
+                    unset($star['check']);
+                    $update = wp_update_post($star);
+                    if(is_wp_error($update)) {
+                        echo $update->get_error_message();
+                    }
                 }
                 
             }
@@ -174,7 +245,7 @@ add_action( 'admin_menu', 'add_astrog_admin_page');
 add_action( 'rest_api_init', 'astrog_star_register_fields');
 
 function astrog_star_register_fields(){
-   foreach (['spect', 'distance'] as $field) {
+   foreach (['spect', 'distance', 'astrog_lumos', 'astrog_hue'] as $field) {
        register_rest_field('astrog_star',
        $field,
        [
