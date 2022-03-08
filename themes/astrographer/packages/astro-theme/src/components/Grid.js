@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect, styled } from "frontity";
 import Star from './Star';
-import * as parser from 'stellar-classification-parser';
 
 
 // TODO: Implement lazy loading
@@ -16,16 +15,13 @@ const Grid = ({ state }) => {
   return (
   <div>
       <GridWrapper>
-        <p>DUMMY TEXT FOR NOW</p>
-         <div>
            {stars.items.map((item) => {
              const star = state.source[item.type][item.id];
 
             return (
-              <Star key={star.id} name={star.title.rendered} spect={star.spect} hue={star.hue} lumos={star.lumos} distance={star.distance}></Star>
+              <Star key={star.id || null} name={star.title.rendered || null} spect={star.spect || null} hue={star.astrog_hue || null} lumos={star.astrog_lumos || null} distance={star.distance || null}></Star>
             ) 
-          })} 
-        </div> 
+          })}
       </GridWrapper>
   </div>
   );

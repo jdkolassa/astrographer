@@ -13,10 +13,12 @@ const Header = styled.header`
   background-color: black;
   text-align: center;
   display: flex;
+  flex-direction: column;
 
   h1 {
     margin: auto;
     font-weight: bold;
+    color: white;
   }
 `
 
@@ -26,7 +28,7 @@ const Nav = styled.nav`
   text-align: center;
   width: 100vw;
   height: 2.5rem;
-  padding: 1rem;
+  padding: 0.25rem;
   & > a {
     color: white;
     text-decoration: none;
@@ -58,8 +60,14 @@ const Root = ({ state }) => {
           }
           body {
             background-color: black;
-            text-color: white;
+            color: white;
             font-family: 'Cairo', sans-serif;
+          }
+          a {
+            margin: 0 1rem;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
           }
         `}
       />
