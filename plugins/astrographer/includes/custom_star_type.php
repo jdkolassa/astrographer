@@ -43,9 +43,9 @@ function cmb2_star_metaboxes(){
     // Let's quickly create some text fields
 
     $textfields = [
-        'name',
-        'spectral_type',
-        'distance',
+        'astrog_name',
+        'astrog_spect',
+        'astrog_distance',
     ];
 
     foreach($textfields as $field) {
@@ -71,7 +71,7 @@ function cmb2_star_metaboxes(){
 
     $cmb->add_field([
         'name' => 'Luminosity/Mass',
-        'desc' => 'Should be an integer. Is the star a supergiant, giant, dwarf, etc. Chiefly affects the size of the star as it appears on the home page.',
+        'desc' => 'Is the star a supergiant, giant, dwarf, etc. Chiefly affects the size of the star as it appears on the home page.',
         'id' => 'astrog_lumos',
         'type' => 'text',
     ]);
