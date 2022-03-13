@@ -5,21 +5,18 @@ import Star from './Star';
 
 // TODO: Implement lazy loading
 
-const Grid = ({ state }) => {
-  
-  const stars = state.source.get('/');
-  console.log(stars);
-  
-  
+const Grid = ({state, stars}) => {
   
   return (
   <div>
+    
       <GridWrapper>
-           {stars.items.map((item) => {
+        
+           {stars.map((item) => {
              const star = state.source[item.type][item.id];
 
             return (
-              <Star key={star.id || null} name={star.title.rendered || null} spect={star.spect || null} hue={star.astrog_hue || null} lumos={star.astrog_lumos || null} distance={star.distance || null}></Star>
+              <Star key={star.id} name={star.title.rendered} spect={star.spect} hue={star.astrog_hue} lumos={star.astrog_lumos} distance={star.distance}></Star>
             ) 
           })}
       </GridWrapper>
@@ -31,6 +28,9 @@ const GridWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
+  padding: 0.5rem;
+  justify-content: center;
 `;
+
 
 export default connect(Grid);

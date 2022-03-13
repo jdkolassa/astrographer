@@ -3,6 +3,9 @@ import { connect, styled, css } from "frontity";
 
 const Star = ({ state, name, spect, hue, lumos, distance }) => {
 
+    const data = state.source.get(state.router.link);
+    console.log(data);
+
     {/* This will be the baseline for star sizes, modified by the mass; I'm placing it here because I think it will be easiest to change it once
 in this location */}
 {/* 
@@ -89,7 +92,8 @@ const Graph = styled.div`
 
 const Box = styled.div`
     border-radius: 5px;
-    border: 0.25rem solid rgb(${color});
+    border: 0.25rem solid transparent;
+    padding: 0.5rem;
 `
 
     return (

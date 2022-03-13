@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import { connect, styled, Head, Global, css } from "frontity";
 import Link from "@frontity/components/link";
 import Switch from "@frontity/components/switch";
 import Grid from "./Grid";
+import {TEMPS, LUMINOSITIES} from "..//codes";
 
-
-// TODO: When Grid is functional, scaffold it out and see what it looks like
 
 const Header = styled.header`
   height: 15vh;
@@ -41,7 +40,46 @@ const Main = styled.main`
 `
 
 const Root = ({ state }) => {
-  const data = state.source.get(state.router.link); // at home, this is state.source.get('/')
+  const data = state.source.get('/');
+  const stars = data.items;
+  console.log(stars);
+
+  
+   const [filters, setFilters] = useState({
+    temps: new Set(),
+    luminosities: new Set(),
+  })
+
+  const handleChange = (event, type) => {
+    setFilters(previousState => {
+      let filters = new Set(previousState[type])
+
+      if (event.target.checked) {
+        filters.add(event.target.value)
+        console.log(filters)
+      } else {
+        filters.delete(event.target.value)
+        console.log(filters)
+      }
+
+      const newState = {
+        ...previousState,
+        [type]: filters,
+      }
+
+      return {
+        ...previousState,
+        [type]: filters,
+      }
+
+    })
+  };
+  
+  const results = useMemo(() => {
+    return stars.filter(star => {
+      return (filters.temps.size === 0 | filters.temps.has(star.hue)) && (filters.luminosities.size === 0 | filters.luminosities.has(star.lumos))
+    })
+  }, [filters.temps, filters.luminosities]);
 
   return (
     
@@ -82,8 +120,39 @@ const Root = ({ state }) => {
         </Header>
         {/* <p>Current page is: {state.router.link}</p> */}
           <Main>
+            <div css={css`display:flex;flex-direction:row;flex-wrap:wrap;`}>
+              <ul css={css`padding:1rem;list-style-type: none;display:flex;flex-direction:row;border:1px solid #ffc877`}>
+              {TEMPS.map(temp =>(
+                  <li key={temp} css={css`margin:0.75rem;`}>
+                    <label>
+                    &nbsp;&nbsp;&nbsp;<input 
+                        type="checkbox"
+                        onChange={e => handleChange(e, 'temps')}
+                        value={temp}
+                      />
+                      {temp}
+                    </label>
+                  </li>
+              ))}
+              </ul>
+
+              <ul css={css`padding:1rem;list-style-type:none;display:flex;flex-direction:row;border:1px solid #9eb1ff`}>
+              {LUMINOSITIES.map(luminosity =>(
+                  <li key={luminosity} css={css`margin:0.75rem;`}>
+                    <label>
+                      &nbsp;&nbsp;&nbsp;<input 
+                        type="checkbox"
+                        onChange={e => handleChange(e, 'luminosities')}
+                        value={luminosity}
+                      />
+                      {luminosity}
+                    </label>
+                  </li>
+              ))}
+              </ul>
+            </div>
             <Switch>
-              <Grid when={data.isHome} />
+              <Grid when={data.isHome} stars={results} />
               <div when={data.isPage} />
             </Switch>
           </Main>
