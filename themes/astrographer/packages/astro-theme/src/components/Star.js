@@ -3,8 +3,6 @@ import { connect, styled, css } from "frontity";
 
 const Star = ({ state, name, spect, hue, lumos, distance }) => {
 
-    const data = state.source.get(state.router.link);
-    console.log(data);
 
     {/* This will be the baseline for star sizes, modified by the mass; I'm placing it here because I think it will be easiest to change it once
 in this location */}
@@ -20,7 +18,7 @@ in this location */}
     D (VII) = White Dwarf "compact" = 
 
 */}
-const baseSize = 4;
+const baseSize = 3;
 
 let mass;
 let color;
