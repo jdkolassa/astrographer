@@ -18,7 +18,7 @@ const Grid = ({state}) => {
 
   const handleChange = (event, type) => {
     setFilters(previousState => {
-      let filters = new Set(previousState[type])
+      const filters = new Set(previousState[type])
 
       if (event.target.checked) {
         filters.add(event.target.value)
@@ -26,11 +26,6 @@ const Grid = ({state}) => {
       } else {
         filters.delete(event.target.value)
         console.log(filters)
-      }
-
-      const newState = {
-        ...previousState,
-        [type]: filters,
       }
 
       return {
@@ -43,7 +38,10 @@ const Grid = ({state}) => {
   
   const results = useMemo(() => {
     return stars.filter(star => {
-      return (filters.temps.size === 0 | filters.temps.has(star.hue)) && (filters.luminosities.size === 0 | filters.luminosities.has(star.lumos))
+      return (
+        (filters.temps.size === 0 | filters.temps.has(star.hue)) && 
+        (filters.luminosities.size === 0 | filters.luminosities.has(star.lumos))
+      )
     })
   }, [filters.temps, filters.luminosities]);
   
@@ -82,7 +80,7 @@ const Grid = ({state}) => {
             </div>
     
       <GridWrapper>
-        
+        {console.log(results)}
            {results.map((item) => {
              const star = state.source[item.type][item.id];
 
