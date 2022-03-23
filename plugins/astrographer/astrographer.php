@@ -258,31 +258,41 @@ function astrog_star_register_fields(){
    }
 }
 
-add_filter("rest_endpoints", function($routes){
-    $route = $routes['/wp/v2/stars'];
-    $route['endpoints'][0]['args']['orderby']['enum'][] = 'meta_value_num';
+add_action('rest_api_init', 'astrog_star_orderby');
 
-    $route['endpoints'][0]['args']['meta_key'] = [
-        'description' => 'The meta key to query',
-        'type' => 'float',
-        'enum' => ['distance'],
-        'validate_callback' => 'rest_validate_request_arg',
-    ];
-    return $routes;
+function astrog_star_orderby(){
+     add_filter("rest_endpoints", function($routes){
+        $route = $routes['/wp/v2/stars'];
+        $route['endpoints'][0]['args']['orderby']['enum'][] = 'meta_value';
     
-}, 10,1);
+        $route['endpoints'][0]['args']['meta_key'] = [
+            'description' => 'The meta key to query',
+            'type' => 'float',
+            'enum' => ['distance'],
+            'validate_callback' => 'rest_validate_request_arg',
+        ];
+        return $routes;
+        
+    }, 10,1);
 
-add_filter("rest_stars_query", function($args, $request){
-    if($orderkey = $request->get_param('meta_key')) {
-        $args['meta_key'] = $orderkey;
-    }
-    return $args;
-},10,2); 
+    
+    
+    add_filter("rest_stars_collection_params", function( $params ){
+        $params['orderby']['enum'][] = "distance";
+        return $params;
+    },10,1); 
+    
+    add_filter("rest_stars_query", function($args, $request){
+        $orderkey = $request->get_param('orderby');
+        if( isset($orderkey) && 'distance' === $orderkey ) {
+            $args['meta_key'] = $orderkey;
+            $args['orderby']['enum'] = 'meta_value';
+        }
+        return $args;
+    },10,2);
+}
 
-add_filter("rest_stars_collection_params", function( $params ){
-    $params['orderby']['enum'][] = "meta_value_num";
-    return $params;
-},10,1); 
+
 
 /* 
  * Get the value of the meta fields
