@@ -108,8 +108,10 @@
                     case preg_match('/(M|m)/', $spect):
                         $row_data['meta_input']['astrog_hue'] = "red";
                         break;
+                        // White dwarfs are a unique case
                     case preg_match('/D/', $spect):
                         $row_data['meta_input']['astrog_hue'] = "degenerate";
+                        $row_data['meta_input']['astrog_lumos'] = "compact";
                         break;
                 }
 
@@ -256,6 +258,32 @@ function astrog_star_register_fields(){
    }
 }
 
+add_filter("rest_endpoints", function($routes){
+    $route = $routes['/wp/v2/stars'];
+    $route['endpoints'][0]['args']['orderby']['enum'][] = 'meta_value_num';
+
+    $route['endpoints'][0]['args']['meta_key'] = [
+        'description' => 'The meta key to query',
+        'type' => 'float',
+        'enum' => ['distance'],
+        'validate_callback' => 'rest_validate_request_arg',
+    ];
+    return $routes;
+    
+}, 10,1);
+
+add_filter("rest_stars_query", function($args, $request){
+    if($orderkey = $request->get_param('meta_key')) {
+        $args['meta_key'] = $orderkey;
+    }
+    return $args;
+},10,2); 
+
+add_filter("rest_stars_collection_params", function( $params ){
+    $params['orderby']['enum'][] = "meta_value_num";
+    return $params;
+},10,1); 
+
 /* 
  * Get the value of the meta fields
  * @param array $object Details of current post.
@@ -268,3 +296,10 @@ function astrog_star_register_fields(){
 function astrog_star_get_field($object, $field_name, $request){
     return get_post_meta($object['id'], $field_name, true);
 }
+
+function astrog_add_meta_vars ($current_vars) {
+    $current_vars = array_merge($current_vars, array('meta_key', 'meta_value', 'meta_value_num'));
+    return $current_vars;
+}
+add_filter('query_vars', 'astrog_add_meta_vars');
+
